@@ -21,5 +21,3 @@ func (e BlogError) Message() string {
 func (e BlogError) Error() string {
 	return "ErrorCode: " + string(rune(e.Code())) + ", ErrorMessage: " + e.Message()
 }
-
-var QueryError = BlogError{ErrorCode: -1, ErrorMessage: "query failed!"}

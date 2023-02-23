@@ -1,7 +1,7 @@
 package service
 
 import (
-	"blog/apps/login/repository"
+	"blog/apps/user/repository"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"log"

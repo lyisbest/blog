@@ -5,6 +5,9 @@ import (
 	"blog/router"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io"
+	"log"
+	"os"
 )
 
 func main() {
@@ -22,7 +25,15 @@ func main() {
 }
 
 func InitGin() *gin.Engine {
+	gin.DisableConsoleColor()
+
+	// 记录到文件。
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	r := gin.Default()
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+		log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
+	}
 	r = router.SetRouters(r)
 	return r
 }

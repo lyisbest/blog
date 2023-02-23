@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"blog/apps/login/model"
+	"blog/apps/user/model"
 	"blog/configuration"
 	"golang.org/x/net/context"
 )

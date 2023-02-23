@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"blog/apps/login/constant"
-	"blog/apps/login/repository"
+	"blog/apps/user/constant"
+	"blog/apps/user/repository"
+	"blog/constants"
 	"blog/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,7 @@ func Auth() gin.HandlerFunc {
 		}
 		rowNum, err := repository.NewUserRepository().GetUserByUserName(ctx, cookie.Value)
 		if err != nil {
-			utils.ResponseWithError(ctx, utils.QueryError)
+			utils.ResponseWithError(ctx, constants.QueryError)
 			ctx.Abort()
 			return
 		}
