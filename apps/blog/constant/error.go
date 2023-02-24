@@ -8,3 +8,4 @@ var BlogUpdateFailError = utils.BlogError{ErrorCode: -2003, ErrorMessage: "blog 
 var BlogGetFailError = utils.BlogError{ErrorCode: -2004, ErrorMessage: "blog get failed"}
 var ListBlogGetFailError = utils.BlogError{ErrorCode: -2005, ErrorMessage: "list blog get failed"}
 var BlogLogGetFailError = utils.BlogError{ErrorCode: -2006, ErrorMessage: "blog log get failed"}
+var BlogLogCreateFailError = utils.BlogError{ErrorCode: -2007, ErrorMessage: "blog log create failed"}

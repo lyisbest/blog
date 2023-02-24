@@ -1,9 +1,9 @@
 package repository
 
 import (
+	"blog/apps/blog/constant"
 	"blog/apps/blog/model"
 	"blog/configuration"
-	"errors"
 	"golang.org/x/net/context"
 	"log"
 )
@@ -22,8 +22,8 @@ func (r *BlogRepository) CreateBlog(ctx context.Context, blog *model.Blog) (*mod
 		return nil, err
 	}
 	if rowNum := result.RowsAffected; rowNum == 0 {
-		err := errors.New("create Blog failed, rowNum: 0")
-		log.Printf("Create Blog Failed, blog: %v, error: %v", *blog, err)
+		err := constant.BlogCreateFailError
+		log.Printf("Create Blog Failed, rowNum = 0, blog: %v, error: %v", *blog, err)
 		return nil, err
 	}
 	return blog, nil
@@ -72,8 +72,8 @@ func (r *BlogRepository) CreateBlogLog(ctx context.Context, blogLog *model.BlogL
 		return err
 	}
 	if rowNum := result.RowsAffected; rowNum == 0 {
-		err := errors.New("create Blog Log failed, rowNum: 0")
-		log.Printf("Create Blog Log Failed, blogLog: %v, error: %v", *blogLog, err)
+		err := constant.BlogLogCreateFailError
+		log.Printf("Create Blog Log Failed, rowNum = 0, blogLog: %v, error: %v", *blogLog, err)
 		return err
 	}
 	return nil

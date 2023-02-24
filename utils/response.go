@@ -7,23 +7,26 @@ import (
 
 type Data interface{}
 
-type response struct {
+type Response struct {
 	Code    int
 	Message string
 	Data    Data
 }
 
-var successResponse = response{
+var successResponse = Response{
 	Code:    0,
 	Message: "success",
 }
 
-func Response(ctx *gin.Context, httpCode int, returnCode int, message string) {
-	ctx.JSON(httpCode, response{Code: returnCode, Message: message})
+//	func Response(ctx *gin.Context, httpCode int, returnCode int, message string) {
+//		ctx.JSON(httpCode, Response{Code: returnCode, Message: message})
+//	}
+func ResponseWithError(ctx *gin.Context, code int, message string) {
+	ctx.JSON(http.StatusOK, Response{Code: code, Message: message})
 }
 
-func ResponseWithError(ctx *gin.Context, error BlogError) {
-	ctx.JSON(http.StatusOK, response{Code: error.Code(), Message: error.Message()})
+func ResponseAbnormalWithError(ctx *gin.Context, code int, message string) {
+	ctx.JSON(http.StatusInternalServerError, Response{Code: code, Message: message})
 }
 
 func ResponseNormal(ctx *gin.Context) {
@@ -31,9 +34,20 @@ func ResponseNormal(ctx *gin.Context) {
 }
 
 func ResponseWithData(ctx *gin.Context, data Data) {
-	ctx.JSON(http.StatusOK, response{
+	ctx.JSON(http.StatusOK, Response{
 		Code:    0,
 		Message: "success",
 		Data:    data,
 	})
+}
+
+func EndWithError(ctx *gin.Context, err error) {
+	code, message := ResolveError(err)
+	if code == http.StatusInternalServerError {
+		ResponseAbnormalWithError(ctx, code, message)
+		return
+	} else {
+		ResponseWithError(ctx, code, message)
+		return
+	}
 }

@@ -1,8 +1,8 @@
 package service
 
 import (
+	"blog/apps/user/constant"
 	"blog/apps/user/repository"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -22,7 +22,7 @@ func (s *LoginService) Login(ctx *gin.Context, userName string, password string)
 		return err
 	}
 	if user == nil {
-		err := errors.New("用户不存在")
+		err := constant.UserNotExistError
 		log.Printf("GetUser failed, error: %v", err)
 		return err
 	}

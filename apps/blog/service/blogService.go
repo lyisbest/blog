@@ -5,7 +5,6 @@ import (
 	"blog/apps/blog/model"
 	"blog/apps/blog/repository"
 	"blog/configuration"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"time"
@@ -116,9 +115,6 @@ func (s *BlogService) GetBlog(ctx *gin.Context, id int) (*model.Blog, error) {
 	if err != nil {
 		return nil, err
 	}
-	if blog == nil {
-		return nil, errors.New("blog can not be found")
-	}
 	return blog, nil
 }
 
@@ -127,12 +123,9 @@ func (s *BlogService) ListBlogWithPagination(ctx *gin.Context, pageNum int) ([]m
 }
 
 func (s *BlogService) GetBlogLog(ctx *gin.Context, id int) (*model.BlogLog, error) {
-	blogLog, err := s.GetBlogLog(ctx, id)
+	blogLog, err := s.blogRepository.GetBlogLog(ctx, id)
 	if err != nil {
 		return nil, err
-	}
-	if blogLog == nil {
-		return nil, errors.New("blog log can not be found")
 	}
 	return blogLog, nil
 }
