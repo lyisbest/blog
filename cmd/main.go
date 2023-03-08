@@ -14,7 +14,12 @@ func main() {
 
 	err := configuration.InitMySQL()
 	if err != nil {
-		panic("failed to connect database")
+		panic("failed to connect mysql")
+	}
+
+	err = configuration.InitRedis()
+	if err != nil {
+		panic("failed to connect redis")
 	}
 
 	r := InitGin()

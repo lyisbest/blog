@@ -22,11 +22,11 @@ func (c *BlogController) CreateBlog(ctx *gin.Context) (interface{}, error) {
 	if err := ctx.ShouldBindJSON(&blogCreateRequest); err != nil {
 		return nil, constants.ResolveError
 	}
-	cookie, exists := ctx.Get("username")
+	user, exists := ctx.Get("username")
 	if !exists {
 		return nil, constant.UserNotExistError
 	}
-	userName, ok := cookie.(string)
+	userName, ok := user.(string)
 	if !ok {
 		return nil, constants.ResolveError
 	}
@@ -43,11 +43,11 @@ func (c *BlogController) DeleteBlog(ctx *gin.Context) (interface{}, error) {
 	if err := ctx.ShouldBindJSON(&blogDeleteRequest); err != nil {
 		return nil, constants.ResolveError
 	}
-	cookie, exists := ctx.Get("username")
+	user, exists := ctx.Get("username")
 	if !exists {
 		return nil, constant.UserNotExistError
 	}
-	userName, ok := cookie.(string)
+	userName, ok := user.(string)
 	if !ok {
 		return nil, constants.ResolveError
 	}

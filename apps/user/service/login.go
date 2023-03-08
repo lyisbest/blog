@@ -3,6 +3,7 @@ package service
 import (
 	"blog/apps/user/constant"
 	"blog/apps/user/repository"
+	"blog/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -26,6 +27,11 @@ func (s *LoginService) Login(ctx *gin.Context, userName string, password string)
 		log.Printf("GetUser failed, error: %v", err)
 		return err
 	}
-	ctx.SetCookie("user_cookie", user.Username, 1000, "/", "localhost", false, true)
+	token, err := utils.GenerateToken(userName)
+	if err != nil {
+		log.Printf("token generate failed, error: %v", err)
+		return err
+	}
+	ctx.Header("token", token)
 	return nil
 }
