@@ -1,0 +1,91 @@
+#需要注意的点:1.数据挂载最好是绝对路径，2.端口绑定最好不要变更，3.占位符需要注意
+services:
+
+  blog:
+    image: blog:0.0.1
+    restart: always
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      blog-net:
+    depends_on:
+      blog-mysql:
+          condition: service_healthy
+      blog-redis:
+          condition: service_healthy
+    volumes:
+      - /home/ubuntu/log/:/home/ubuntu/log/
+      - /home/ubuntu/images:/home/ubuntu/images
+
+  blog-mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: blog
+    command: [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_general_ci",
+        "--skip-character-set-client-handshake"
+    ]
+    volumes:
+#      记得改这里  注意宿主机的挂载路径需要时绝对路径
+      - /home/ubuntu/src/blog/sql:/docker-entrypoint-initdb.d
+      - blog-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-proot' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      blog-net:
+
+
+  blog-redis:
+    image: redis:latest
+    restart: always
+
+    ports:
+      - 6309:6309
+    expose:
+      - 6309
+    command: ["redis-server", "--requirepass","root"]
+    volumes:
+      - blog-data:/data
+    networks:
+      blog-net:
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  blog-nginx:
+    image: nginx
+    volumes:
+      - /home/ubuntu/nginx_conf/:/etc/nginx/conf.d/
+      - /home/ubuntu/nginx_log:/var/log/nginx
+      - /home/ubuntu/images:/home/ubuntu/images
+    ports:
+      - 80:80
+    environment:
+      - NGINX_HOST=foobar.com
+      - NGINX_PORT=80
+    networks:
+      blog-net:
+
+
+volumes:
+  blog-data:
+networks:
+  blog-net:

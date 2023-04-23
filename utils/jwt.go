@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"blog/configuration"
 	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/go-redis/redis"
 	"time"
 )
 
@@ -12,15 +14,16 @@ type customClaim struct {
 }
 
 var (
-	secret        = []byte("iwillrich")
-	expTime int64 = 30
+	secret                  = []byte("iwillrich")
+	expTime   time.Duration = 30 * time.Minute
+	tokenUsed string        = "1"
 )
 
 func GenerateToken(name string) (string, error) {
 	claim := customClaim{
 		Name: name,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: int64(time.Now().Unix() + expTime),
+			ExpiresAt: time.Now().Unix() + int64(expTime.Seconds()),
 			Issuer:    "man",
 		},
 	}
@@ -46,7 +49,6 @@ func ValidateToken(token string) bool {
 			}
 		}
 	}
-
 	return true
 }
 
@@ -60,4 +62,26 @@ func RefreshToken(token string) (string, error) {
 		return "", err
 	}
 	return newToken, nil
+}
+
+func MarkTokenUsed(token string) error {
+	err := configuration.RedisClient.Set(token, tokenUsed, expTime).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetTokenUsed(token string) error {
+	result, err := configuration.RedisClient.Get(token).Result()
+	if err == redis.Nil {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if result == tokenUsed {
+		return BlogError{ErrorCode: -1008, ErrorMessage: "token has security risks. Please change your password in time."}
+	}
+	return nil
 }

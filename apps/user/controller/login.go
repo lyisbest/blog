@@ -3,23 +3,18 @@ package controller
 import (
 	"blog/apps/user/request"
 	"blog/apps/user/service"
-	"blog/constants"
 	"github.com/gin-gonic/gin"
 )
 
 type LoginController struct {
-	loginService service.LoginService
+	loginService *service.LoginService
 }
 
-func NewLoginController(loginService service.LoginService) *LoginController {
+func NewLoginController(loginService *service.LoginService) *LoginController {
 	return &LoginController{loginService: loginService}
 }
 
-func (c LoginController) Login(ctx *gin.Context) (interface{}, error) {
-	var loginRequest request.LoginRequest
-	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
-		return nil, constants.ResolveError
-	}
+func (c LoginController) Login(ctx *gin.Context, loginRequest request.LoginRequest) (interface{}, error) {
 	err := c.loginService.Login(ctx, loginRequest.UserName, loginRequest.Password)
 	if err != nil {
 		return nil, err

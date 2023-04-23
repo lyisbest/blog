@@ -56,13 +56,27 @@ func (r *BlogRepository) GetBlogById(ctx context.Context, id int) (*model.Blog, 
 	return &blog, nil
 }
 
-func (r *BlogRepository) ListBlogWithPagination(ctx context.Context, pageNum int) ([]model.Blog, error) {
+func (r *BlogRepository) ListBlogWithPagination(ctx context.Context, pageNum int, pageSize int) ([]model.Blog, error) {
 	var listBlog []model.Blog
-	if err := configuration.DB.Limit(pageNum).Order("ctime desc").Find(&listBlog).Error; err != nil {
+	start := (pageNum - 1) * pageSize
+	if err := configuration.DB.Offset(start).Limit(pageSize).Order("ctime desc").Find(&listBlog).Error; err != nil {
 		log.Printf("List Blog failed, pageNum: %v, blogList: %v, error: %v", pageNum, listBlog, err)
 		return nil, err
 	}
 	return listBlog, nil
+}
+
+func (r *BlogRepository) SetBlogView(ctx context.Context, view *model.BlogView) error {
+	return nil
+}
+
+func (r *BlogRepository) GetBlogView(ctx context.Context, id int) (int64, error) {
+	var blogView model.BlogView
+	if err := configuration.DB.Where("id = ?", id).Find(&blogView).Error; err != nil {
+		log.Printf("Get Blog View failed, BlogId: %v error: %v\n", id, err)
+		return 0, err
+	}
+	return blogView.ViewNum, nil
 }
 
 func (r *BlogRepository) CreateBlogLog(ctx context.Context, blogLog *model.BlogLog) error {

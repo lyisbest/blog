@@ -13,6 +13,15 @@ func (Blog) TableName() string {
 	return "blog_tab"
 }
 
+type BlogView struct {
+	Id      int   `gorm:"column:id" json:"id"`
+	ViewNum int64 `gorm:"view_num" json:"view_num"`
+}
+
+func (BlogView) TableName() string {
+	return "blog_view_tab"
+}
+
 type BlogLog struct {
 	Id            int    `gorm:"column:id" json:"id"`
 	BlogId        int    `gorm:"column:blog_id" json:"blogId"`

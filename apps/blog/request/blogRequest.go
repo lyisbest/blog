@@ -1,5 +1,9 @@
 package request
 
+import (
+	"bytes"
+)
+
 type BlogCreateRequest struct {
 	Title   string `gorm:"column:title" json:"title"`
 	Content string `gorm:"column:content" json:"content"`
@@ -24,5 +28,10 @@ type BlogLogGetRequest struct {
 }
 
 type ListBlogRequest struct {
-	PageNum int `json:"page_num"`
+	PageNum  int `json:"page_num"`
+	PageSize int `json:"page_size"`
+}
+
+type ImageRequest struct {
+	File bytes.Buffer `json:"file"`
 }

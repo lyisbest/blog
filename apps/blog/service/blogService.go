@@ -11,10 +11,10 @@ import (
 )
 
 type BlogService struct {
-	blogRepository repository.BlogRepository
+	blogRepository *repository.BlogRepository
 }
 
-func NewBlogService(blogRepository repository.BlogRepository) *BlogService {
+func NewBlogService(blogRepository *repository.BlogRepository) *BlogService {
 	return &BlogService{blogRepository: blogRepository}
 }
 
@@ -118,8 +118,12 @@ func (s *BlogService) GetBlog(ctx *gin.Context, id int) (*model.Blog, error) {
 	return blog, nil
 }
 
-func (s *BlogService) ListBlogWithPagination(ctx *gin.Context, pageNum int) ([]model.Blog, error) {
-	return s.blogRepository.ListBlogWithPagination(ctx, pageNum)
+func (s *BlogService) ListBlogWithPagination(ctx *gin.Context, pageNum int, pageSize int) ([]model.Blog, error) {
+	return s.blogRepository.ListBlogWithPagination(ctx, pageNum, pageSize)
+}
+
+func (s *BlogService) AddBlogView(ctx *gin.Context, id int) {
+
 }
 
 func (s *BlogService) GetBlogLog(ctx *gin.Context, id int) (*model.BlogLog, error) {
